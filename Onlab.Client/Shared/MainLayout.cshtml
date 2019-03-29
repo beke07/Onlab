@@ -1,0 +1,58 @@
+﻿@inherits UserBaseComponent
+@inject HttpClient Http;
+@inject IUriHelper UriHelper;
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+<div class="main">
+    <div class="top-row px-4">
+        <a href="http://blazor.net" target="_blank" class="ml-md-auto">About</a>
+    </div>
+
+    <div class="content px-4">
+        @if (User != null)
+        {
+            @if (isFree || User.IsSignedIn)
+            {
+                @Body
+            }
+            else
+            {
+                <h1>Jelentkezz be pls!</h1>
+            }
+        }
+    </div>
+</div>
+
+@functions{
+
+    bool isFree;
+
+    class Valami
+    {
+        public List<string> NotFree { get; set; }
+    }
+
+    protected override void OnParametersSet()
+    {
+        string localUrl = new Uri(UriHelper.GetAbsoluteUri()).Segments.Last();
+
+        if (localUrl == "/" ||
+           localUrl == "login" ||
+           localUrl == "externalLogin")
+        {
+            isFree = true;
+        }
+        else
+        {
+            isFree = false;
+        }
+    }
+
+    protected override async Task OnInitAsync()
+    {
+        User = await Http.GetJsonAsync<CurrentUserViewModel>("api/User/CurrentUser");
+    }
+}

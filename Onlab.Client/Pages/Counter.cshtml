@@ -1,0 +1,25 @@
+﻿@page "/counter"
+@page "/counter/{text}"
+
+<h1>Counter</h1>
+<h1>@Text</h1>
+<p>Current count: @currentCount</p>
+
+<button class="btn btn-primary" onclick="@IncrementCount">Click me</button>
+
+<input type="checkbox" checked="@IsCompleted" />
+
+@functions {
+    int currentCount = 0;
+
+    void IncrementCount()
+    {
+        currentCount++;
+    }
+
+    [Parameter]
+    private bool IsCompleted { get; set; } = true;
+
+    [Parameter]
+    private string Text { get; set; } = "fantastic";
+}

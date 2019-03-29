@@ -1,0 +1,45 @@
+﻿@page "/login/externalLogin"
+@using Microsoft.AspNetCore.Components.Services
+@using Onlab.Client.Layouts
+
+@inherits UserBaseComponent
+@inject HttpClient Http;
+@inject IUriHelper UriHelper;
+
+<hr />
+
+@if (CommandModel != null)
+{
+    <p class="text-info">
+        You've successfully authenticated with <strong>@CommandModel.Provider</strong>.
+        Please enter an email address and a login for this site below and click the Register button to finish
+        logging in.
+    </p>
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group">
+                <label for="Email">Email</label>
+                <input id="Email" bind="@CommandModel.Email" class="form-control" />
+            </div>
+            <button type="button" onclick="@ExternalLoginConfirm" class="btn btn-default">Register</button>
+        </div>
+    </div>
+}
+
+
+@functions {
+
+    public ExternalLoginConfirmationCommand CommandModel { get; set; }
+
+    protected override async Task OnInitAsync()
+    {
+        CommandModel = await Http.GetJsonAsync<ExternalLoginConfirmationCommand>("api/Login/ExternalLoginDetails");
+    }
+
+    async Task ExternalLoginConfirm()
+    {
+        await Http.SendJsonAsync(HttpMethod.Post, "/api/Login/ExternalLoginConfirmation", CommandModel);
+        UriHelper.NavigateTo("/", true);
+    }
+}

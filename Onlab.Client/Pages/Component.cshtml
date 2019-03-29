@@ -1,0 +1,25 @@
+﻿@page "/component"
+
+<div class="panel panel-success">
+    <div class="panel-heading">@Title</div>
+    <div class="panel-body">@ChildContent</div>
+</div>
+
+<button class="btn btn-primary" onclick="@UpdateHeading">
+    Update heading
+</button>
+
+<button onclick="@(e => Console.WriteLine("Hello, world!"))">Say hello</button>
+
+@functions {
+    [Parameter]
+    private string Title { get; set; }
+
+    [Parameter]
+    private RenderFragment ChildContent { get; set; }
+
+    void UpdateHeading(UIMouseEventArgs e)
+    {
+        Console.WriteLine("asd");
+    }
+}

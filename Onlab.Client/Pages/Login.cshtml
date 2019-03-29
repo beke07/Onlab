@@ -1,0 +1,36 @@
+﻿@page "/login"
+
+@inject HttpClient Http;
+@inject IUriHelper UriHelper;
+
+<h1>Welcome</h1>
+
+@if (loginProviders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    @foreach (var provider in loginProviders)
+    {
+        <form action="/api/Login/ExternalLogin" method="post">
+            <button type="submit"
+                    class="btn btn-primary"
+                    name="provider"
+                    value="@provider.Name"
+                    title="@("Log in using your "+provider.DisplayName+" account")">
+                @provider.Name
+            </button>
+        </form>
+    }
+}
+
+
+@functions{
+    SigninProviderViewModel[] loginProviders;
+
+    protected override async Task OnInitAsync()
+    {
+        loginProviders = await Http.GetJsonAsync<SigninProviderViewModel[]>("api/Login/LoginProviders");
+    }
+}
