@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Onlab.Dal.Entities;
 using Onlab.Shared;
 using System.Threading.Tasks;
 
@@ -9,12 +10,12 @@ namespace Onlab.Server.Controllers
     [Route("api/[controller]")]
     public class UserController : Controller
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
 
         public UserController(
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -23,11 +24,12 @@ namespace Onlab.Server.Controllers
         [HttpGet("[action]")]
         public async Task<CurrentUser> CurrentUser()
         {
-            IdentityUser user = await _userManager.GetUserAsync(HttpContext.User);
+            ApplicationUser user = await _userManager.GetUserAsync(HttpContext.User);
 
             return new CurrentUser()
             {
-                Name = user?.Email,
+                FirstName = user?.FirstName,
+                LastName = user?.LastName,
                 IsSignedIn = user != null
             };
         }

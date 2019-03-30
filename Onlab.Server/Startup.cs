@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Authorization;
+using Onlab.Dal.Entities;
 
 namespace Onlab.Server
 {
@@ -40,8 +41,8 @@ namespace Onlab.Server
 
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
 
-            services.AddIdentity<IdentityUser, IdentityRole>()
-                .AddRoles<IdentityRole>()
+            services.AddIdentity<ApplicationUser, ApplicationRole>()
+                .AddRoles<ApplicationRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 

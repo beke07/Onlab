@@ -7,7 +7,7 @@ namespace Onlab.Dal.Entities
 {
     public class Album : EntityBase
     {
-        public IdentityUser User { get; set; }
+        public ApplicationUser User { get; set; }
 
         public string Name { get; set; }
 

@@ -2,25 +2,22 @@
 @inject HttpClient Http;
 @inject IUriHelper UriHelper;
 
-<div class="sidebar">
-    <NavMenu />
-</div>
+@if (UserState.CurrentUser != null && UserState.CurrentUser.IsSignedIn)
+{
+    <div class="sidebar">
+        <NavMenu />
+    </div>
 
-<div class="main">
-    <div class="content px-4">
-        @if (UserState.CurrentUser != null)
-        {
-            @if (UserState.CurrentUser.IsSignedIn)
-            {
-                @Body
-            }
-            else
-            {
-                <Login></Login>
-            }
-        }
-    </div>  
-</div>
+    <div class="main">
+        <div class="content px-4">
+            @Body
+        </div>
+    </div>
+}
+else
+{
+    <Login></Login>
+}
 
 @functions{
 

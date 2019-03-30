@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Onlab.Dal.Entities;
 using Onlab.Shared;
 using System;
 using System.Collections.Generic;
@@ -13,14 +14,14 @@ namespace Onlab.Server.Controllers
     [Route("api/[controller]")]
     public class LoginController : Controller
     {
-        private readonly SignInManager<IdentityUser> _signInManager;
-        private readonly UserManager<IdentityUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IUrlHelper _urlHelper;
 
         public LoginController(
             IUrlHelper urlHelper,
-            UserManager<IdentityUser> userManager,
-            SignInManager<IdentityUser> signInManager)
+            UserManager<ApplicationUser> userManager,
+            SignInManager<ApplicationUser> signInManager)
         {
             _signInManager = signInManager;
             _userManager = userManager;
@@ -73,10 +74,12 @@ namespace Onlab.Server.Controllers
             }
             else
             {
-                var user = new IdentityUser();
+                var user = new ApplicationUser();
 
                 if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
+                    user.FirstName = info.Principal.FindFirstValue(ClaimTypes.GivenName);
+                    user.LastName = info.Principal.FindFirstValue(ClaimTypes.Surname);
                     user.UserName = info.Principal.FindFirstValue(ClaimTypes.Email);
                     user.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
                     user.EmailConfirmed = true;
