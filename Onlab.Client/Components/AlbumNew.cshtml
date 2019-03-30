@@ -1,0 +1,18 @@
+﻿@using Onlab.Client.Components.Modals
+
+<a onclick="@OpenModal" class="text-center album d-inline-block text-dark">
+    <img src="/images/folder-add.svg" alt="Folder" width="200" height="200" />
+    <h5>Mappa létrehozása</h5>
+</a>
+
+<CreateAlbum ref="@createAlbum"></CreateAlbum>
+
+@functions{
+
+    CreateAlbum createAlbum;
+
+    protected async Task OpenModal()
+    {
+        await createAlbum.Show();
+    }
+}

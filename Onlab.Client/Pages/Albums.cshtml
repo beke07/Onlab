@@ -1,3 +1,19 @@
 ﻿@page "/albums"
 
 <h1>Albumok</h1>
+
+<div class="row">
+    @for (int i = 0; i < 4; i++)
+    {
+        <div class="pl-3 pb-3">
+            <AlbumIcon Title="Mappa" AlbumId="@Guid.NewGuid()"></AlbumIcon>
+        </div>
+    }
+    <div class="pl-3 pb-3">
+        <AlbumNew></AlbumNew>
+    </div>
+</div>
+
+@functions{
+
+}
