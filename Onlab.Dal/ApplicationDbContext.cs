@@ -12,6 +12,8 @@ namespace Onlab.Dal
     {
         public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
-        public DbSet<Valami> Valamik { get; set; }  
+        public DbSet<Album> Albums { get; set; }
+
+        public DbSet<Image> Images { get; set; }
     }
 }

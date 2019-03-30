@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Onlab.Dal;
 
 namespace Onlab.Server
 {
@@ -8,7 +9,9 @@ namespace Onlab.Server
     {
         public static void Main(string[] args)
         {
-            BuildWebHost(args).Run();
+            BuildWebHost(args)
+                .MigrateDatabase<ApplicationDbContext>()
+                .Run();
         }
 
         public static IWebHost BuildWebHost(string[] args) =>

@@ -1,1 +1,5 @@
-﻿<Router AppAssembly="typeof(Program).Assembly" />
+﻿@using Onlab.Client.Pages
+
+<UserStateProvider>
+    <Router AppAssembly="typeof(Program).Assembly" FallbackComponent="typeof(Login)" />
+</UserStateProvider>

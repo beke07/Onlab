@@ -1,13 +1,10 @@
-﻿@using Microsoft.AspNetCore.Components.Services
-@using Onlab.Client.ViewModels
-@using Onlab.Client.Layouts
-
-@inherits UserBaseComponent
-@inject HttpClient Http;
+﻿@inject HttpClient Http;
 @inject IUriHelper UriHelper;
 
 <div class="top-row pl-4 navbar navbar-dark">
-    <a class="navbar-brand" href="">Onlab</a>
+    <a class="navbar-brand" href="">
+        <h3 class="text-black-50">Önálló labor</h3>
+    </a>
     <button class="navbar-toggler" onclick="@ToggleNavMenu">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -17,7 +14,7 @@
 
 <div class="@NavMenuCssClass" onclick="@ToggleNavMenu">
     <ul class="nav flex-column">
-        @if (User != null && User.IsSignedIn)
+        @if (UserState.CurrentUser != null && UserState.CurrentUser.IsSignedIn)
         {
             <li class="nav-item px-3">
                 <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
@@ -35,18 +32,9 @@
                 </NavLink>
             </li>
             <li class="nav-item px-3">
-                <button class="nav-link" onclick="@Logout">
-                    Szia @User.Name!
-                    Kijelentkezés
-                </button>
-            </li>
-        }
-        else
-        {
-            <li class="nav-item px-3">
-                <NavLink class="nav-link" href="login">
-                    <span class="oi oi-person" aria-hidden="true"></span> Bejelentkezés
-                </NavLink>
+                <a href="" class="nav-link" onclick="@Logout">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Kijelentkezés
+                </a>
             </li>
         }
     </ul>
@@ -57,6 +45,9 @@
 
     string NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 
+    [CascadingParameter]
+    public UserStateProvider UserState { get; set; }
+
     void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
@@ -64,12 +55,7 @@
 
     async Task Logout()
     {
-        User = await Http.GetJsonAsync<CurrentUserViewModel>("api/Login/Logout");
-        UriHelper.NavigateTo("/");
-    }
-
-    protected override async Task OnInitAsync()
-    {
-        User = await Http.GetJsonAsync<CurrentUserViewModel>("api/User/CurrentUser");
+        await UserState.LogoutAsync();
+        UriHelper.NavigateTo("/", true);
     }
 }

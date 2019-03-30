@@ -12,6 +12,8 @@ using Microsoft.EntityFrameworkCore;
 using AspNetCore.IServiceCollection.AddIUrlHelper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 
 namespace Onlab.Server
 {
@@ -29,6 +31,7 @@ namespace Onlab.Server
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc().AddNewtonsoftJson();
+
             services.AddResponseCompression(opts =>
             {
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
@@ -38,14 +41,17 @@ namespace Onlab.Server
             services.AddDbContext<ApplicationDbContext>(o => o.UseSqlServer(Configuration.GetConnectionString(nameof(ApplicationDbContext))));
 
             services.AddIdentity<IdentityUser, IdentityRole>()
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 
-            services.AddAuthentication().AddGoogle(googleOptions =>
-            {
-                googleOptions.ClientId = Configuration.GetSection("Google").GetValue<string>("Authentication:Google:ClientId");
-                googleOptions.ClientSecret = Configuration.GetSection("Google").GetValue<string>("Authentication:Google:ClientSecret");
-            });
+            services.AddAuthentication()
+                .AddCookie()
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration.GetSection("Google").GetValue<string>("Authentication:Google:ClientId");
+                    options.ClientSecret = Configuration.GetSection("Google").GetValue<string>("Authentication:Google:ClientSecret");
+                });
 
             services.AddUrlHelper();
         }
@@ -62,7 +68,6 @@ namespace Onlab.Server
             }
 
             app.UseAuthentication();
-            app.UseAuthorization();
 
             app.UseMvc(routes =>
             {

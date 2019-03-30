@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Onlab.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using Onlab.Client.ViewModels;
-using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Onlab.Server.Controllers
 {
@@ -27,10 +28,10 @@ namespace Onlab.Server.Controllers
         }
         
         [HttpGet("[action]")]
-        public async Task<IEnumerable<SigninProviderViewModel>> LoginProviders()
+        public async Task<IEnumerable<SignInProvider>> LoginProviders()
         {
             return (await _signInManager.GetExternalAuthenticationSchemesAsync())
-                  .Select(s => new SigninProviderViewModel()
+                  .Select(s => new SignInProvider()
                   {
                       Name = s.Name,
                       DisplayName = s.DisplayName
@@ -44,24 +45,6 @@ namespace Onlab.Server.Controllers
             var properties = _signInManager.ConfigureExternalAuthenticationProperties(provider, redirectUrl);
             return Challenge(properties, provider);
         }
-
-        
-        [HttpGet("[action]")]
-        public async Task<ExternalLoginConfirmationCommand> ExternalLoginDetails()
-        {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-
-            ExternalLoginConfirmationCommand command = new ExternalLoginConfirmationCommand();
-
-            if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
-            {
-                command.Provider = info.LoginProvider;
-                command.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
-            }
-
-            return command;
-        }
-
 
         [HttpGet("[action]")]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = null, string remoteError = null)
@@ -78,6 +61,7 @@ namespace Onlab.Server.Controllers
             }
             
             var result = await _signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, isPersistent: false, bypassTwoFactor: false);
+
             if (result == null || result.IsNotAllowed)
             {
                 return Redirect("/login");
@@ -87,38 +71,41 @@ namespace Onlab.Server.Controllers
             {
                 return Redirect("/");
             }
-
-            return Redirect("/login/externalLogin");
-        }
-
-        [HttpPost("[action]")]
-        public async Task<IActionResult> ExternalLoginConfirmation([FromBody] ExternalLoginConfirmationCommand command)
-        {
-            var info = await _signInManager.GetExternalLoginInfoAsync();
-            if (info == null)
+            else
             {
-                throw new ApplicationException("Error loading external login information during confirmation.");
-            }
-            var user = new IdentityUser { UserName = command.Email, Email = command.Email, EmailConfirmed = true };
-            var result = await _userManager.CreateAsync(user);
-            if (result.Succeeded)
-            {
-                result = await _userManager.AddLoginAsync(user, info);
-                if (result.Succeeded)
+                var user = new IdentityUser();
+
+                if (info.Principal.HasClaim(c => c.Type == ClaimTypes.Email))
                 {
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    return Ok();
+                    user.UserName = info.Principal.FindFirstValue(ClaimTypes.Email);
+                    user.Email = info.Principal.FindFirstValue(ClaimTypes.Email);
+                    user.EmailConfirmed = true;
+                }
+
+                var createResult = await _userManager.CreateAsync(user);
+
+                if (createResult.Succeeded)
+                {
+                    createResult = await _userManager.AddLoginAsync(user, info);
+
+                    if (createResult.Succeeded)
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        return Redirect("/");
+                    }
                 }
             }
-            return BadRequest();
+
+            return Redirect("/login");
         }
 
+        [Authorize]
         [HttpGet("[action]")]
-        public async Task<CurrentUserViewModel> Logout()
+        public async Task<CurrentUser> Logout()
         {
             await _signInManager.SignOutAsync();
 
-            return new CurrentUserViewModel()
+            return new CurrentUser()
             {
                 IsSignedIn = false
             };

@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Onlab.Client.ViewModels;
+using Onlab.Shared;
+using System.Threading.Tasks;
 
 namespace Onlab.Server.Controllers
 {
+    [ApiController]
     [Route("api/[controller]")]
     public class UserController : Controller
     {
@@ -23,11 +21,11 @@ namespace Onlab.Server.Controllers
         }
 
         [HttpGet("[action]")]
-        public async Task<CurrentUserViewModel> CurrentUser()
+        public async Task<CurrentUser> CurrentUser()
         {
             IdentityUser user = await _userManager.GetUserAsync(HttpContext.User);
 
-            return new CurrentUserViewModel()
+            return new CurrentUser()
             {
                 Name = user?.Email,
                 IsSignedIn = user != null

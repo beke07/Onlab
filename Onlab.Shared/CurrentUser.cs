@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Onlab.Client.ViewModels
+namespace Onlab.Shared
 {
-    public class CurrentUserViewModel
+    public class CurrentUser
     {
         public bool IsSignedIn { get; set; }
 

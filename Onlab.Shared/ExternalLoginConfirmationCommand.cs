@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Onlab.Client.ViewModels
+namespace Onlab.Shared
 {
     public class ExternalLoginConfirmationCommand
     {

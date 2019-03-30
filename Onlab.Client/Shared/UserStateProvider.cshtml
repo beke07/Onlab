@@ -1,0 +1,25 @@
+﻿@using System.Net.Http
+@inject HttpClient Http
+
+<CascadingValue Value="@this">
+    @ChildContent
+</CascadingValue>
+
+@functions {
+    [Parameter] RenderFragment ChildContent { get; set; }
+
+    public CurrentUser CurrentUser { get; private set; }
+
+    public bool IsLoggedIn => CurrentUser?.IsSignedIn ?? false;
+
+    protected override async Task OnInitAsync()
+    {
+        CurrentUser = await Http.GetJsonAsync<CurrentUser>("api/User/CurrentUser");
+    }
+
+    public async Task LogoutAsync()
+    {
+        CurrentUser = await Http.GetJsonAsync<CurrentUser>("api/Login/Logout");
+    }
+
+}

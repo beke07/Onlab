@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Onlab.Dal;
 
 namespace Onlab.Dal.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20190329201308_Dbsets")]
+    partial class Dbsets
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -187,17 +189,21 @@ namespace Onlab.Dal.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("CreatorId");
+                    b.Property<Guid>("CreatorId");
+
+                    b.Property<string>("CreatorId1");
 
                     b.Property<string>("Name");
 
-                    b.Property<string>("UserId");
+                    b.Property<Guid>("UserId");
+
+                    b.Property<string>("UserId1");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("CreatorId1");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId1");
 
                     b.ToTable("Albums");
                 });
@@ -211,7 +217,9 @@ namespace Onlab.Dal.Migrations
 
                     b.Property<DateTime>("CreationDate");
 
-                    b.Property<string>("CreatorId");
+                    b.Property<Guid>("CreatorId");
+
+                    b.Property<string>("CreatorId1");
 
                     b.Property<byte[]>("Data");
 
@@ -225,7 +233,7 @@ namespace Onlab.Dal.Migrations
 
                     b.HasIndex("AlbumId");
 
-                    b.HasIndex("CreatorId");
+                    b.HasIndex("CreatorId1");
 
                     b.ToTable("Images");
                 });
@@ -279,11 +287,11 @@ namespace Onlab.Dal.Migrations
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId1");
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId1");
                 });
 
             modelBuilder.Entity("Onlab.Dal.Entities.Image", b =>
@@ -294,7 +302,7 @@ namespace Onlab.Dal.Migrations
 
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "Creator")
                         .WithMany()
-                        .HasForeignKey("CreatorId");
+                        .HasForeignKey("CreatorId1");
                 });
 #pragma warning restore 612, 618
         }
